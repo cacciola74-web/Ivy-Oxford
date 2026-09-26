@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Copia Commissione — Ivy Oxford</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--text:#171717;--muted:#6b7280;--line:#ddd;--accent:#111}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--text)}
+header{position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line);padding:14px 16px calc(12px + env(safe-area-inset-top));}
+h1{font-size:20px;margin:0 0 4px}.sub{font-size:13px;color:var(--muted)}
+main{max-width:900px;margin:auto;padding:14px 12px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px #00000008}
+h2{font-size:16px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #ccc;border-radius:10px;background:#fff;font-size:16px}textarea{min-height:70px;resize:vertical}
+.tablewrap{overflow:auto;margin:0 -4px}.prod{min-width:760px;border-collapse:collapse;width:100%}.prod th,.prod td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;font-size:13px}.prod th{color:var(--muted);font-weight:600}.prod input{padding:8px;font-size:14px;width:68px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px 14px;font-size:16px;font-weight:700;cursor:pointer}.primary{background:#111;color:#fff}.secondary{background:#e9e9ed;color:#111}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#f2f2f4;border-radius:12px;padding:12px}.stat b{display:block;font-size:20px}.stat span{font-size:12px;color:var(--muted)}
+.saved{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}.saved:last-child{border:0}.danger{color:#b00020;border:0;background:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr 1fr}.actions{grid-template-columns:1fr}.card{padding:14px}}
+@media print{header,.actions,#archivio,.no-print{display:none!important}body{background:#fff}.card{box-shadow:none;border:0;padding:0}.tablewrap{overflow:visible}.prod{min-width:0;font-size:10px}input,textarea,select{border:0;padding:0}}
+</style>
+</head>
+<body>
+<header><h1>Copia Commissione</h1><div class="sub">Ivy Oxford · Autunno/Inverno 2026 · Evolutiontime S.r.l.</div></header>
+<main>
+<section class="card">
+<h2>Dati ordine</h2>
+<div class="grid">
+<div><label>Data</label><input id="data" type="date"></div>
+<div><label>Ordine numero</label><input id="numero"></div>
+<div><label>Cliente</label><input id="cliente"></div>
+<div><label>Agente</label><input id="agente"></div>
+<div><label>Via</label><input id="via"></div>
+<div><label>Città</label><input id="citta"></div>
+<div><label>Partita IVA</label><input id="piva"></div>
+<div><label>Telefono</label><input id="telefono" type="tel"></div>
+<div><label>E-mail</label><input id="email" type="email"></div>
+<div><label>SDI</label><input id="sdi"></div>
+<div><label>Consegna</label><input id="consegna"></div>
+<div><label>Pagamento</label><input id="pagamento"></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Articoli e quantità</h2>
+<div class="tablewrap">
+<table class="prod">
+<thead><tr><th>Codice</th><th>Descrizione</th><th>Variante</th><th>Prezzo</th><th>Retail</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>XXL</th><th>Tot.</th></tr></thead>
+<tbody id="righe"></tbody>
+</table>
+</div>
+</section>
+
+<section class="card">
+<h2>Riepilogo</h2>
+<div class="summary">
+<div class="stat"><b id="totCapi">0</b><span>Totale capi</span></div>
+<div class="stat"><b id="totColli">0</b><span>Totale colli</span></div>
+<div class="stat"><b id="totOrdine">€0,00</b><span>Valore ordine</span></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Note</h2><textarea id="note" placeholder="Note dell'ordine..."></textarea>
+</section>
+
+<section class="card" id="archivio">
+<h2>Ordini salvati</h2><div id="lista"></div>
+</section>
+
+<section class="actions">
+<button class="btn primary" onclick="salva()">Salva ordine</button>
+<button class="btn secondary" onclick="window.print()">Stampa / PDF</button>
+<button class="btn secondary" onclick="nuovo()">Nuovo ordine</button>
+</section>
+</main>
+
+<script>
+const prodotti=[
+["II-26-S001-16","SLIP COTONE","COTONE",9.90,24.90],
+["II-26-S002-16","SLIP COTONE","COTONE",9.90,24.90],
+["II-26-S003-16","SLIP COTONE","COTONE",9.90,24.90],
+["II-26-S004-16","SLIP COTONE","COTONE",9.90,24.90],
+["II-26-B001-16","BOXER COTONE","COTONE",9.90,24.90],
+["II-26-B002-16","BOXER COTONE","COTONE",9.90,24.90],
+["II-26-B003-16","BOXER COTONE","COTONE",9.90,24.90],
+["II-26-B004-16","BOXER COTONE","COTONE",9.90,24.90]
+];
+const righe=document.getElementById("righe");
+prodotti.forEach((p,i)=>{
+ const tr=document.createElement("tr");
+ tr.innerHTML=`<td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td><td>€${p[3].toFixed(2)}</td><td>€${p[4].toFixed(2)}</td>`+
+ ["S","M","L","XL","XXL"].map((s,j)=>`<td><input type="number" min="0" step="1" value="${[2,4,4,4,2][j]}" data-i="${i}" data-s="${s}" oninput="calcola()"></td>`).join("")+
+ `<td id="r${i}">16</td>`;
+ righe.appendChild(tr);
+});
+document.getElementById("data").value=new Date().toISOString().slice(0,10);
+function euro(n){return n.toLocaleString("it-IT",{style:"currency",currency:"EUR"})}
+function calcola(){
+ let capi=0,val=0;
+ prodotti.forEach((p,i)=>{
+   let q=0; document.querySelectorAll(`input[data-i="${i}"]`).forEach(x=>q+=Number(x.value)||0);
+   document.getElementById("r"+i).textContent=q;capi+=q;val+=q*p[3];
+ });
+ document.getElementById("totCapi").textContent=capi;
+ document.getElementById("totColli").textContent=Math.ceil(capi/16);
+ document.getElementById("totOrdine").textContent=euro(val);
+}
+function dati(){
+ return {data:data.value,numero:numero.value,cliente:cliente.value,agente:agente.value,via:via.value,citta:citta.value,piva:piva.value,telefono:telefono.value,email:email.value,sdi:sdi.value,consegna:consegna.value,pagamento:pagamento.value,note:note.value,qty:[...document.querySelectorAll('input[data-i]')].map(x=>x.value)};
+}
+function salva(){
+ const d=dati(), arr=JSON.parse(localStorage.getItem("ordiniIvy")||"[]");
+ arr.unshift(d);localStorage.setItem("ordiniIvy",JSON.stringify(arr));renderArchivio();alert("Ordine salvato.");
+}
+function nuovo(){document.querySelectorAll("input,textarea").forEach(x=>{if(x.type!=="date")x.value=""});document.getElementById("data").value=new Date().toISOString().slice(0,10);document.querySelectorAll('input[data-i]').forEach((x,j)=>x.value=[2,4,4,4,2][j%5]);calcola()}
+function renderArchivio(){
+ const arr=JSON.parse(localStorage.getItem("ordiniIvy")||"[]"), box=document.getElementById("lista");
+ box.innerHTML=arr.length?arr.slice(0,10).map((o,i)=>`<div class="saved"><span><b>${o.cliente||"Cliente non indicato"}</b><br>${o.numero||"Senza numero"} · ${o.data||""}</span><button class="danger" onclick="cancella(${i})">Elimina</button></div>`).join(""):"Nessun ordine salvato.";
+}
+function cancella(i){const a=JSON.parse(localStorage.getItem("ordiniIvy")||"[]");a.splice(i,1);localStorage.setItem("ordiniIvy",JSON.stringify(a));renderArchivio()}
+calcola();renderArchivio();
+</script>
+</body>
+</html>
