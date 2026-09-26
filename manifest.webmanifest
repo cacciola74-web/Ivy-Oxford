@@ -1,0 +1,9 @@
+{
+  "name": "IVY OXFORD - Gestione Ordini",
+  "short_name": "IVY OXFORD",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101a33",
+  "theme_color": "#101a33",
+  "lang": "it"
+}
